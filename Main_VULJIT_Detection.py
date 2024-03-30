@@ -1,3 +1,7 @@
+import sys
+sys.path.insert(
+    0, r"/Users/nguyenbinhminh/MasterUET/Thesis/CodeJIT"
+)
 import argparse
 from jitvul_model.jit_vul_detection_model import  *
 

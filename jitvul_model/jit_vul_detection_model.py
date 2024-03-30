@@ -1,10 +1,12 @@
-import os
+import sys
+sys.path.insert(
+    0, r"/Users/nguyenbinhminh/MasterUET/Thesis/CodeJIT/jitvul_model"
+)
 import gc
 from torch import nn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, \
     classification_report, roc_curve, auc
 from tqdm import tqdm
-import torch
 from graph_dataset import *
 import random
 from RGAT import *
@@ -23,7 +25,7 @@ def train_model(graph_path, train_file_path, test_file_path, _params, model_path
     train_dataset = GraphDataset(train_files, graph_path)
     _trainLoader = DataLoader(train_dataset, collate_fn=collate_batch, shuffle=False)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('mps')
     max_epochs = _params['max_epochs']
 
     data = {}
@@ -69,13 +71,14 @@ def train(curr_epochs, _trainLoader, model, criterion, optimizer, device):
     correct = 0
     model.train()
     for graph, commit_id, index in _trainLoader:
+        print("Type of graph", type(graph))
         if graph.num_nodes > 1500:
             graph = graph.subgraph(torch.LongTensor(list(range(0, 1500))))
         if index % 500 == 0:
             print("curr: {}".format(index) + " train loss: {}".format(train_loss / (index + 1)) + " acc:{}".format(
                 correct / (index + 1)))
-        if device != 'cpu':
-            graph = graph.cuda()
+        if device != torch.device('cpu'):
+            graph = graph.to("mps")
 
         target = graph.y
         if graph.num_nodes == 0 or graph.num_edges == 0:
@@ -98,7 +101,7 @@ def train(curr_epochs, _trainLoader, model, criterion, optimizer, device):
 
 
 def test_model(graph_path, test_file_path, _params, model_path):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('mps')
     tmp_file = open(test_file_path, "r").readlines()
     test_files = [f.replace("\n", "") for f in tmp_file]
     random.shuffle(test_files)
@@ -143,8 +146,8 @@ def evaluate_metrics(model_name, model, _loader, device):
         for graph, commit_id, index in _loader:
             if graph.num_nodes > 1500:
                 graph = graph.subgraph(torch.LongTensor(list(range(0, 1500))))
-            if device != 'cpu':
-                graph = graph.cuda()
+            if device != torch.device('cpu'):
+                graph = graph.to("mps")
             target = graph.y
             if graph.num_nodes == 0 or graph.num_edges == 0:
                 continue

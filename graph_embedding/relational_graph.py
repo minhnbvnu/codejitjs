@@ -3,8 +3,8 @@ import torch
 from gensim.models import KeyedVectors
 from torch_geometric.data import Data
 
-change_operations = ["ADD", "DELETE", "REMAIN"]
-edge_types = ["AST", "CFG", "CDG", "DDG"]
+change_operations = []
+edge_types = ["REACHING_DEF", "CDG"]
 
 
 def load_nodes(nodes, index_col, encoders=None, **kwargs):
@@ -74,9 +74,7 @@ class OneHotEncoder(object):
 def embed_graph(commit_id, ground_truth, nodes, edges):
     node_x, node_mapping = load_nodes(
         nodes, index_col='id', encoders={
-            'ALPHA': OneHotEncoder(change_operations),
             'node_content': ContentEncoder()
-
         })
 
 
@@ -87,7 +85,9 @@ def embed_graph(commit_id, ground_truth, nodes, edges):
         dst_index_col='innode',
         dst_mapping=node_mapping,
         edge_type_col = 'etype',
-        encoders={'change_operation': OneHotEncoder(change_operations)}
+        encoders={
+            'variable': ContentEncoder()
+        }
     )
 
 

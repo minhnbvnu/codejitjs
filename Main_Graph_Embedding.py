@@ -1,5 +1,6 @@
 import argparse
 import os
+import traceback
 from os import listdir
 from os.path import isfile, join
 import torch
@@ -8,6 +9,7 @@ from graph_embedding.relational_graph import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    # csv
     parser.add_argument('--node_graph_dir', type=str, help='dir of the node files')
     parser.add_argument('--edge_graph_dir', type=str, help='dir of the edge files')
     parser.add_argument('--embedding_graph_dir', type=str, help='dir to save embedding graph')
@@ -29,11 +31,11 @@ if __name__ == '__main__':
         os.makedirs(embedding_graph_dir)
     for f in node_files:
         try:
-            commit_id = f.split(".")[0].split("_")[-1]
+            function_name = f.split(".")[0]
             node_info = pandas.read_csv(join(node_graph_dir, f))
-            edge_info = pandas.read_csv(join(edge_graph_dir, "edge_" + commit_id + ".csv"))
-            edge_info = edge_info[edge_info["etype"] != "CFG"]
-            data = embed_graph(commit_id, label, node_info,  edge_info)
-            torch.save(data, os.path.join(embedding_graph_dir, "data_{}.pt".format(commit_id)))
+            edge_info = pandas.read_csv(join(edge_graph_dir, function_name + ".csv"))
+            data = embed_graph(function_name, label, node_info, edge_info)
+            torch.save(data, os.path.join(embedding_graph_dir, "data_{}.pt".format(function_name)))
         except:
-            print("exception:" + commit_id)
+            traceback.print_exc()
+            print("exception:" + function_name)
