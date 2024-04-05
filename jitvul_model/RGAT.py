@@ -15,9 +15,9 @@ class RGAT(torch.nn.Module):
         self.graph_readout_func = graph_readout_func
         for i in range(self.num_layers):
             if i == 0:
-                exec('self.conv_{} = RGATConv(in_channels, hidden_channels,num_relations=self.num_of_relations, add_self_loops=False, dropout = dropout, edge_dim = edge_dim)'.format(i))
+                exec('self.conv_{} = RGATConv(in_channels, hidden_channels,num_relations=self.num_of_relations, dropout = dropout, edge_dim = edge_dim)'.format(i))
             else:
-                exec('self.conv_{} = RGATConv(hidden_channels, hidden_channels,num_relations=self.num_of_relations, add_self_loops=False, dropout = dropout, edge_dim = edge_dim)'.format(i))
+                exec('self.conv_{} = RGATConv(hidden_channels, hidden_channels,num_relations=self.num_of_relations, dropout = dropout, edge_dim = edge_dim)'.format(i))
         self.relu = ReLU(inplace=True)
         self.lin = Linear(hidden_channels, 2)
 

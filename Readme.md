@@ -8,7 +8,7 @@ You can used our <a href="https://drive.google.com/file/d/1-0KTxFoPgx4OmEK7RTVxV
 
 ## Instruction to embed features of nodes and edges of the graphs
 ```
-python Main_Graph_Embedding.py --node_graph_dir="Data/Graph/node" --node_graph_dir="Data/Graph/edge" --label=1 --embedding_graph_dir="Data/embedding" 
+python Main_Graph_Embedding.py --node_graph_dir="/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/positive/node" --edge_graph_dir="/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/positive/edge" --label=1 --embedding_graph_dir="/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/embedding"
 ```
 
 You can used our <a href="https://drive.google.com/drive/folders/13t6b0Iavnlrj0zEdksmuz7MPWyz6n9jY?usp=share_link"> embedded graphs </a>
@@ -16,7 +16,7 @@ You can used our <a href="https://drive.google.com/drive/folders/13t6b0Iavnlrj0z
 ## Instruction to train and test GNN models
 
 ```
-python Main_VULJIT_Detection.py --graph_dir='Data/Embedding_CTG'  --train_file='Data/data_split/train_time_id.txt' --test_file='Data/data_split/test_time_id.txt'  --model_dir='Model'  --model_name="rgcn" 
+python Main_VULJIT_Detection.py --graph_dir='/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/embedding'  --train_file='/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/train_test_split/train.txt' --test_file='/Users/nguyenbinhminh/MasterUET/Thesis/code-smell-classifier/data-graph/train_test_split/test.txt'  --model_dir='Model'  --model_name="rgcn"
 ```
 
 Download the commit ids in the training and testing sets from <a href="https://drive.google.com/drive/folders/1pJJsY_dkpdRGyhsCz44LdVrW-waA0j8E?usp=sharing"> here </a>

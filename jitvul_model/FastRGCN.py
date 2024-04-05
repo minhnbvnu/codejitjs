@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import global_mean_pool, global_max_pool, global_add_pool
 import torch
 from torch.nn import ReLU
-
+from torch_geometric.nn import RGCNConv, RGATConv, CuGraphRGCNConv, GATConv, FastRGCNConv
 
 
 class FastRGCN(torch.nn.Module):
@@ -16,9 +16,9 @@ class FastRGCN(torch.nn.Module):
         self.graph_readout_func = graph_readout_func
         for i in range(self.num_layers):
             if i == 0:
-                exec('self.conv_{} = FastRGCNConv(in_channels, hidden_channels,num_relations=self.num_of_relations,  dropout = dropout)'.format(i))
+                exec('self.conv_{} = FastRGCNConv(in_channels, hidden_channels,num_relations=self.num_of_relations)'.format(i))
             else:
-                exec('self.conv_{} = FastRGCNConv(hidden_channels, hidden_channels,num_relations=self.num_of_relations, dropout = dropout)'.format(i))
+                exec('self.conv_{} = FastRGCNConv(hidden_channels, hidden_channels,num_relations=self.num_of_relations)'.format(i))
 
         self.relu = ReLU(inplace=True)
         self.lin = Linear(hidden_channels, 2)

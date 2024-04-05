@@ -6,6 +6,7 @@ from os.path import isfile, join
 import torch
 import pandas
 from graph_embedding.relational_graph import *
+import re
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -32,6 +33,7 @@ if __name__ == '__main__':
     for f in node_files:
         try:
             function_name = f.split(".")[0]
+            print("function_name", function_name)
             node_info = pandas.read_csv(join(node_graph_dir, f))
             edge_info = pandas.read_csv(join(edge_graph_dir, function_name + ".csv"))
             data = embed_graph(function_name, label, node_info, edge_info)

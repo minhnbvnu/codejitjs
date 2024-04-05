@@ -1,10 +1,12 @@
 import sys
+
 sys.path.insert(
     0, r"/Users/nguyenbinhminh/MasterUET/Thesis/CodeJIT/jitvul_model"
 )
 import gc
 from torch import nn
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, \
+    matthews_corrcoef, \
     classification_report, roc_curve, auc
 from tqdm import tqdm
 from graph_dataset import *
@@ -23,9 +25,9 @@ def train_model(graph_path, train_file_path, test_file_path, _params, model_path
     train_files = [f.replace("\n", "") for f in tmp_file]
 
     train_dataset = GraphDataset(train_files, graph_path)
-    _trainLoader = DataLoader(train_dataset, collate_fn=collate_batch, shuffle=False)
+    _trainLoader = DataLoader(train_dataset, collate_fn=collate_batch, shuffle=True)
 
-    device = torch.device('mps')
+    device = torch.device('cpu')
     max_epochs = _params['max_epochs']
 
     data = {}
@@ -71,14 +73,13 @@ def train(curr_epochs, _trainLoader, model, criterion, optimizer, device):
     correct = 0
     model.train()
     for graph, commit_id, index in _trainLoader:
-        print("Type of graph", type(graph))
         if graph.num_nodes > 1500:
             graph = graph.subgraph(torch.LongTensor(list(range(0, 1500))))
         if index % 500 == 0:
             print("curr: {}".format(index) + " train loss: {}".format(train_loss / (index + 1)) + " acc:{}".format(
                 correct / (index + 1)))
         if device != torch.device('cpu'):
-            graph = graph.to("mps")
+            graph = graph.to("cpu")
 
         target = graph.y
         if graph.num_nodes == 0 or graph.num_edges == 0:
@@ -101,14 +102,14 @@ def train(curr_epochs, _trainLoader, model, criterion, optimizer, device):
 
 
 def test_model(graph_path, test_file_path, _params, model_path):
-    device = torch.device('mps')
+    device = torch.device('cpu')
     tmp_file = open(test_file_path, "r").readlines()
     test_files = [f.replace("\n", "") for f in tmp_file]
     random.shuffle(test_files)
     test_files = test_files
 
     test_dataset = GraphDataset(test_files, graph_path)
-    _testLoader = DataLoader(test_dataset, collate_fn=collate_batch, shuffle=False)
+    _testLoader = DataLoader(test_dataset, collate_fn=collate_batch, shuffle=True)
 
     data = {}
     for graph, _, index in _testLoader:
@@ -147,7 +148,7 @@ def evaluate_metrics(model_name, model, _loader, device):
             if graph.num_nodes > 1500:
                 graph = graph.subgraph(torch.LongTensor(list(range(0, 1500))))
             if device != torch.device('cpu'):
-                graph = graph.to("mps")
+                graph = graph.to("cpu")
             target = graph.y
             if graph.num_nodes == 0 or graph.num_edges == 0:
                 continue
@@ -169,10 +170,12 @@ def evaluate_metrics(model_name, model, _loader, device):
         f1 = round(f1_score(all_targets, all_predictions) * 100, 2)
         recall = round(recall_score(all_targets, all_predictions) * 100, 2)
         matrix = confusion_matrix(all_targets, all_predictions)
+        mcc = matthews_corrcoef(all_targets, all_predictions)
         target_names = ['clean', 'buggy']
         report = classification_report(all_targets, all_predictions, target_names=target_names)
         result = "auc: {}".format(auc_score) + " acc: {}".format(acc) + " precision: {}".format(
-            precision) + " recall: {}".format(recall) + " f1: {}".format(f1) + " \nreport:\n{}".format(
+            precision) + " recall: {}".format(recall) + " f1: {}".format(f1) + " mcc: {}".format(
+            mcc) + " \nreport:\n{}".format(
             report) + "\nmatrix:\n{}".format(matrix)
 
         print(result)
