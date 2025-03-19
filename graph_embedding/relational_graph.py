@@ -4,7 +4,7 @@ from gensim.models import KeyedVectors
 from torch_geometric.data import Data
 
 change_operations = []
-edge_types = ["REACHING_DEF", "CDG"]
+edge_types = ["SOURCE_FILE", "ALIAS_OF", "BINDS_TO", "INHERITS_FROM", "AST", "CONDITION","ARGUMENT", "CALL", "RECEIVER", "CFG", "REACHING_DEF", "CDG", "DOMINATE", "POST_DOMINATE", "CONTAINS", "EVAL_TYPE", "PARAMETER_LINK", "TAGGED_BY", "BINDS", "REF", "CAPTURE", "IS_CALL_FOR_IMPORT", "IMPORTS"]
 
 
 def load_nodes(nodes, index_col, encoders=None, **kwargs):

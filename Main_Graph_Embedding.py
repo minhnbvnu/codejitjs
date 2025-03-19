@@ -8,6 +8,9 @@ import pandas
 from graph_embedding.relational_graph import *
 import re
 
+def is_path_exist(path):
+    return os.path.exists(path)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # csv
@@ -31,6 +34,9 @@ if __name__ == '__main__':
     if not os.path.isdir(embedding_graph_dir):
         os.makedirs(embedding_graph_dir)
     for f in node_files:
+        function_name = f.split(".")[0]
+        if is_path_exist(os.path.join(embedding_graph_dir, "data_{}.pt".format(function_name))):
+            continue
         try:
             function_name = f.split(".")[0]
             print("function_name", function_name)

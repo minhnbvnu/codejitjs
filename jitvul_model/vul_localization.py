@@ -23,7 +23,7 @@ def train_model(train_file_path, test_file_path, _params, model_path, starting_e
     train_dataset = GraphDataset(train_files, train_file_path)
     _trainLoader = DataLoader(train_dataset, collate_fn=collate_batch, shuffle=False)
 
-    device = torch.device('mps')
+    device = torch.device('cpu')
     max_epochs = _params['max_epochs']
 
     data = {}
@@ -98,7 +98,7 @@ def train(curr_epochs, _trainLoader, model, criterion, optimizer, device):
 
 
 def test_model(test_file_path, _params, model_path):
-    device = torch.device('mps')
+    device = torch.device('cpu')
     test_files = [f for f in os.listdir(test_file_path) if os.path.isfile(f)]
 
     test_dataset = GraphDataset(test_files, test_file_path)

@@ -7,7 +7,7 @@ from torch_geometric.nn import RGCNConv, RGATConv, CuGraphRGCNConv, GATConv, Fas
 
 
 class FastRGCN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels,edge_dim, num_relations = 4, dropout = 0.1, num_of_layers = 2, graph_readout_func = "add"):
+    def __init__(self, in_channels, hidden_channels,edge_dim, num_relations = 23, dropout = 0.1, num_of_layers = 2, graph_readout_func = "add"):
         super(FastRGCN, self).__init__()
         torch.manual_seed(12345)
         self.num_layers = num_of_layers
